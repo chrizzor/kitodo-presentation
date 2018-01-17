@@ -66,16 +66,17 @@ class tx_dlf_listview extends tx_dlf_plugin {
         }
 
         // Get separator.
-        $separator = $this->pi_getLL('separator', ' - ', TRUE);
+        $separator = '<span class="tx-dlf-listview-separator"> - </span>';
+
 
         // Add link to previous page.
         if ($this->piVars['pointer'] > 0) {
 
-            $output = $this->pi_linkTP_keepPIvars($this->pi_getLL('prevPage', '&lt;', TRUE), array ('pointer' => $this->piVars['pointer'] - 1), TRUE).$separator;
+            $output = '<span class="tx-dlf-listview-prev">'.$this->pi_linkTP_keepPIvars($this->pi_getLL('prevPage', '&lt;', TRUE), array ('pointer' => $this->piVars['pointer'] - 1), TRUE).'</span>'.$separator;
 
         } else {
 
-            $output = $this->pi_getLL('prevPage', '&lt;', TRUE).$separator;
+            $output = '<span class="tx-dlf-listview-prev listview-disabled">'.$this->pi_getLL('prevPage', '&lt;', TRUE).'</span>'.$separator;
 
         }
 
@@ -90,11 +91,11 @@ class tx_dlf_listview extends tx_dlf_plugin {
 
                 if ($this->piVars['pointer'] != $i) {
 
-                    $output .= $this->pi_linkTP_keepPIvars(sprintf($this->pi_getLL('page', '%d', TRUE), $i + 1), array ('pointer' => $i), TRUE).$separator;
+                    $output .= '<span class="tx-dlf-listview-page">'.$this->pi_linkTP_keepPIvars(sprintf($this->pi_getLL('page', '%d', TRUE), $i + 1), array ('pointer' => $i), TRUE).'</span>'.$separator;
 
                 } else {
 
-                    $output .= sprintf($this->pi_getLL('page', '%d', TRUE), $i + 1).$separator;
+                    $output .= '<span class="tx-dlf-listview-prev listview-current">'.sprintf($this->pi_getLL('page', '%d', TRUE), $i + 1).'</span>'.$separator;
 
                 }
 
@@ -102,7 +103,7 @@ class tx_dlf_listview extends tx_dlf_plugin {
 
             } elseif ($skip === TRUE) {
 
-                $output .= $this->pi_getLL('skip', '...', TRUE).$separator;
+                $output .= '<span class="tx-dlf-listview-skip">'.$this->pi_getLL('skip', '...', TRUE).'</span>'.$separator;
 
                 $skip = FALSE;
 
@@ -115,11 +116,11 @@ class tx_dlf_listview extends tx_dlf_plugin {
         // Add link to next page.
         if ($this->piVars['pointer'] < $maxPages - 1) {
 
-            $output .= $this->pi_linkTP_keepPIvars($this->pi_getLL('nextPage', '&gt;', TRUE), array ('pointer' => $this->piVars['pointer'] + 1), TRUE);
+            $output .= '<span class="tx-dlf-listview-next">'.$this->pi_linkTP_keepPIvars($this->pi_getLL('nextPage', '&gt;', TRUE), array ('pointer' => $this->piVars['pointer'] + 1), TRUE).'</span>';
 
         } else {
 
-            $output .= $this->pi_getLL('nextPage', '&gt;', TRUE);
+            $output .= '<span class="tx-dlf-listview-prev listview-disabled">'.$this->pi_getLL('nextPage', '&gt;', TRUE).'</span>';
 
         }
 
