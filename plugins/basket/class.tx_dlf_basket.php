@@ -286,16 +286,18 @@ class tx_dlf_basket extends tx_dlf_plugin {
         }
 
         // basket go to
-        if ($this->conf['targetBasket'] && $this->conf['basketGoToButton'] && $this->piVars['id']) {
+        if ($this->conf['targetBasket'] && $this->conf['basketGoToButton']) {
 
             $label = $this->pi_getLL('goBasket', '', TRUE);
 
             $basketConf = array (
                 'parameter' => $this->conf['targetBasket'],
-                'title' => $label
+                'title' => $label,
+                'ATagBeforeWrap' => true,
+                'wrap' => '<span class="meta-batchcount">' . count($basketData['doc_ids']) . '</span>'
             );
 
-            $markerArray['###BASKET###'] = $this->cObj->typoLink($label, $basketConf);
+            $markerArray['###BASKET###'] = $this->cObj->typoLink("<label>" . $label . "</label>", $basketConf);
 
         } else {
 
