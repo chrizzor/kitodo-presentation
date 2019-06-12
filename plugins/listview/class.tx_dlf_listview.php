@@ -374,7 +374,7 @@ class tx_dlf_listview extends tx_dlf_plugin {
         // Select sort field.
         $uniqId = uniqid($prefix.'-');
 
-        $sorting .= '<label for="'.$uniqId.'">'.$this->pi_getLL('orderBy', '', TRUE).'</label><select id="'.$uniqId.'" name="'.$this->prefixId.'[order]" onchange="javascript:this.form.submit();">';
+        $sorting .= '<div class="listview-sortitem"><label for="'.$uniqId.'">'.$this->pi_getLL('orderBy', '', TRUE).'</label><select id="'.$uniqId.'" name="'.$this->prefixId.'[order]" onchange="javascript:this.form.submit();">';
 
         // Add relevance sorting if this is a search result list.
         if ($this->list->metadata['options']['source'] == 'search') {
@@ -389,7 +389,7 @@ class tx_dlf_listview extends tx_dlf_plugin {
 
         }
 
-        $sorting .= '</select>';
+        $sorting .= '</select></div>';
 
         // Select sort direction.
         $uniqId = uniqid($prefix.'-');
