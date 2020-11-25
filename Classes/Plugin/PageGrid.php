@@ -53,12 +53,18 @@ class PageGrid extends \Kitodo\Dlf\Common\AbstractPlugin
         $markerArray['###NUMBER###'] = $number;
         // Set pagination.
         $markerArray['###PAGINATION###'] = htmlspecialchars($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$number]]['orderlabel']);
+
+        $addParams = '';
+        if ($this->conf['useRestrictionProxy']) {
+            $addParams = '&page=' . $number . '&id=' . $this->doc->uid . '&fileGrp=' . $this->conf['fileGrpThumbs'];
+        }
+
         // Get thumbnail or placeholder.
         $fileGrpsThumb = GeneralUtility::trimExplode(',', $this->conf['fileGrpThumbs']);
         if (array_intersect($fileGrpsThumb, array_keys($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$number]]['files'])) !== [] ) {
             while ($fileGrpThumb = array_shift($fileGrpsThumb)) {
                 if (!empty($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$number]]['files'][$fileGrpThumb])) {
-                    $thumbnailFile = $this->doc->getFileLocation($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$number]]['files'][$fileGrpThumb]);
+                    $thumbnailFile = $this->doc->getFileLocation($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$number]]['files'][$fileGrpThumb]) . $addParams;
                     break;
                 }
             }
@@ -67,6 +73,7 @@ class PageGrid extends \Kitodo\Dlf\Common\AbstractPlugin
         } else {
             $thumbnailFile = PathUtility::stripPathSitePrefix(ExtensionManagementUtility::extPath($this->extKey)) . 'Resources/Public/Images/PageGridPlaceholder.jpg';
         }
+
         $thumbnail = '<img alt="' . $markerArray['###PAGINATION###'] . '" src="' . $thumbnailFile . '" />';
         // Get new plugin variables for typolink.
         $piVars = $this->piVars;
@@ -74,6 +81,7 @@ class PageGrid extends \Kitodo\Dlf\Common\AbstractPlugin
         // unset($piVars['pagegrid']) is for DFG Viewer compatibility!
         unset($piVars['pointer'], $piVars['DATA'], $piVars['pagegrid']);
         $piVars['page'] = $number;
+
         $linkConf = [
             'useCacheHash' => 1,
             'parameter' => $this->conf['targetPid'],

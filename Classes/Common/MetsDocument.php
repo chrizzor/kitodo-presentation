@@ -221,6 +221,20 @@ final class MetsDocument extends Document
         }
     }
 
+    public function getFileRestriction($id)
+    {
+        $restriction = $this->mets->xpath('./mets:dmdSec[@ID="' . $id . '"]/mets:mdWrap/mets:xmlData/mods:mods/mods:accessRestriction');
+        if (
+            !empty($id)
+            && !empty($restriction)
+        ) {
+            return (string) $restriction[0];
+        } else {
+            Helper::devLog('There is no file node with @ID "' . $id . '" or no restriction specified', DEVLOG_SEVERITY_WARNING);
+            return '';
+        }
+    }
+
     /**
      * {@inheritDoc}
      * @see \Kitodo\Dlf\Common\Document::getLogicalStructure()

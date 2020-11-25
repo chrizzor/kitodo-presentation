@@ -12,6 +12,8 @@
 
 namespace Kitodo\Dlf\Plugin\Eid;
 
+use Kitodo\Dlf\Common\Document;
+use Kitodo\Dlf\Common\Helper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Http\Response;
@@ -47,22 +49,58 @@ class PageViewRestrictionProxy
             throw new \InvalidArgumentException('No valid url passed!', 1580482805);
         }
 
-        // fetch the requested data or header
-        $fetchedData = GeneralUtility::getUrl($url, $header);
+        $page = (int) $request->getQueryParams()['page'];
+        $docId = (int) $request->getQueryParams()['id'];
+        $fileGrp = (string) $request->getQueryParams()['fileGrp'];
 
-//        // Fetch header data separately to get "Last-Modified" info
-//        if ($header === 0) {
-//            $fetchedHeaderString = GeneralUtility::getUrl($url, 2);
-//            if (!empty($fetchedHeaderString)) {
-//                $fetchedHeader = explode("\n", $fetchedHeaderString);
-//                foreach ($fetchedHeader as $headerline) {
-//                    if (stripos($headerline, 'Last-Modified:') !== false) {
-//                        $lastModified = trim(substr($headerline, strpos($headerline, ':') + 1));
-//                        break;
-//                    }
-//                }
-//            }
-//        }
+        $this->doc = Document::getInstance($docId);
+        if (!$this->doc->ready) {
+            // Destroy the incomplete object.
+            $this->doc = null;
+            Helper::devLog('Failed to load document with UID ' . $this->piVars['id'], DEVLOG_SEVERITY_ERROR);
+        }
+
+        if ($page == 0) {
+            if ($this->doc->thumbnailLoaded) {
+                $restriction = '';
+            }
+        } else {
+            $fileMetsLocation = $this->doc->getFileLocation($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$fileGrp]);
+            $restriction = $this->doc->getFileRestriction($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['dmdId']);
+
+            $params = explode("&", $fileMetsLocation);
+            $urlPageNotValid = true;
+            foreach ($params as $key => $value) {
+                if (urldecode(str_replace('url=', '', $value)) == $url) {
+                    $urlPageNotValid = false;
+                }
+            }
+            if ($urlPageNotValid) {
+                /** @var Response $response */
+                $response = GeneralUtility::makeInstance(Response::class);
+                $fetchedData = '{"error": "Image or page not valid"}';
+                if ($fetchedData) {
+                    $response->getBody()->write($fetchedData);
+                }
+                return $response;
+            }
+        }
+
+        /** @var \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController $typoScriptFrontendController */
+        $typoScriptFrontendController = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+            \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController::class,
+            $GLOBALS['TYPO3_CONF_VARS'],
+            1, // page ID
+            0 // pageType.
+        );
+        $typoScriptFrontendController->initFEuser();
+
+        if ($restriction === "restricted" && $typoScriptFrontendController->fe_user->user['username'] == '') {
+            $fetchedData = GeneralUtility::getUrl('http://167.86.98.211/fileadmin/placeholder.png', $header);
+        } else {
+            // fetch the requested data or header
+            $fetchedData = GeneralUtility::getUrl($url, $header);
+        }
 
         // create response object
         /** @var Response $response */
@@ -74,9 +112,8 @@ class PageViewRestrictionProxy
             $response = $response->withHeader('Access-Control-Max-Age', '86400');
             $response = $response->withHeader('Content-Type', finfo_buffer(finfo_open(FILEINFO_MIME), $fetchedData));
         }
-//        if ($header === 0 && !empty($lastModified)) {
-//            $response = $response->withHeader('Last-Modified', $lastModified);
-//        }
+
         return $response;
+
     }
 }
