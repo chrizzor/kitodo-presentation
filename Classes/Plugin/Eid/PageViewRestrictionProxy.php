@@ -53,53 +53,60 @@ class PageViewRestrictionProxy
         $docId = (int) $request->getQueryParams()['id'];
         $fileGrp = (string) $request->getQueryParams()['fileGrp'];
 
-        $this->doc = Document::getInstance($docId);
-        if (!$this->doc->ready) {
-            // Destroy the incomplete object.
-            $this->doc = null;
-            Helper::devLog('Failed to load document with UID ' . $this->piVars['id'], DEVLOG_SEVERITY_ERROR);
-        }
-
-        if ($page == 0) {
-            if ($this->doc->thumbnailLoaded) {
-                $restriction = '';
+        if ($docId) {
+            $this->doc = Document::getInstance($docId);
+            if (!$this->doc->ready) {
+                // Destroy the incomplete object.
+                $this->doc = null;
+                Helper::devLog('Failed to load document with UID ' . $this->piVars['id'], DEVLOG_SEVERITY_ERROR);
             }
-        } else {
-            $fileMetsLocation = $this->doc->getFileLocation($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$fileGrp]);
-            $restriction = $this->doc->getFileRestriction($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['dmdId']);
 
-            $params = explode("&", $fileMetsLocation);
-            $urlPageNotValid = true;
-            foreach ($params as $key => $value) {
-                if (urldecode(str_replace('url=', '', $value)) == $url) {
-                    $urlPageNotValid = false;
+            if ($page == 0) {
+                if ($this->doc->thumbnailLoaded) {
+                    $restriction = '';
+                    $restrictionGroup = '';
+                }
+            } else {
+                $fileLocationFromMets = $this->doc->getFileLocation($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$fileGrp]);
+                $restriction = $this->doc->getFileRestriction($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['dmdId']);
+
+                $restrictionGroup = $this->doc->getDocumentRestrictionGroup();
+
+                // check if struct element is "restricted"
+                $logicalStructId = $this->doc->smLinks['p2l'][$this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['id']][1];
+                $restrictionStructElement = $this->doc->getFileRestriction($this->doc->getLogicalStructure($logicalStructId)['dmdId']);
+
+                $urlValidationResponse = $this->checkUrl($fileLocationFromMets, $url);
+                if ($urlValidationResponse) {
+                    // error / manipulation
+                    return $urlValidationResponse;
                 }
             }
-            if ($urlPageNotValid) {
-                /** @var Response $response */
-                $response = GeneralUtility::makeInstance(Response::class);
-                $fetchedData = '{"error": "Image or page not valid"}';
-                if ($fetchedData) {
-                    $response->getBody()->write($fetchedData);
-                }
-                return $response;
+
+            /** @var \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController $typoScriptFrontendController */
+            $typoScriptFrontendController = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController::class,
+                $GLOBALS['TYPO3_CONF_VARS'],
+                1, // page ID
+                0 // pageType.
+            );
+            $typoScriptFrontendController->initFEuser();
+            $typoScriptFrontendController->initUserGroups();
+
+            if (($restriction === "restricted" || $restrictionStructElement === "restricted") && $typoScriptFrontendController->fe_user->user['username'] != '' &&
+                    ($typoScriptFrontendController->fe_user->groupData['title'][1] == 'AdminGroup' ||
+                        array_slice($typoScriptFrontendController->fe_user->groupData['title'], 0, 1)[0] == $restrictionGroup)
+            ) {
+                // fetch the requested data or header
+                $fetchedData = GeneralUtility::getUrl($url, $header);
+            } else if ($restriction !== "restricted" && $restrictionStructElement !== "restricted") {
+                $fetchedData = GeneralUtility::getUrl($url, $header);
+            } else {
+                $fetchedData = GeneralUtility::getUrl('http://kitodoMOB:frontendMOB@167.86.98.211/fileadmin/placeholder.png', $header);
             }
-        }
-
-        /** @var \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController $typoScriptFrontendController */
-        $typoScriptFrontendController = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-            \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController::class,
-            $GLOBALS['TYPO3_CONF_VARS'],
-            1, // page ID
-            0 // pageType.
-        );
-        $typoScriptFrontendController->initFEuser();
-
-        if ($restriction === "restricted" && $typoScriptFrontendController->fe_user->user['username'] == '') {
-            $fetchedData = GeneralUtility::getUrl('http://167.86.98.211/fileadmin/placeholder.png', $header);
         } else {
-            // fetch the requested data or header
-            $fetchedData = GeneralUtility::getUrl($url, $header);
+            //missing doc id return placeholder
+            $fetchedData = GeneralUtility::getUrl('http://kitodoMOB:frontendMOB@167.86.98.211/fileadmin/placeholder.png', $header);
         }
 
         // create response object
@@ -115,5 +122,27 @@ class PageViewRestrictionProxy
 
         return $response;
 
+
+    }
+
+    protected function checkUrl($metsUrl, $url) {
+        $params = explode("&", $metsUrl);
+        $urlPageValid = false;
+        foreach ($params as $key => $value) {
+            if (urldecode(str_replace('url=', '', $value)) == $url) {
+                $urlPageValid = true;
+            }
+        }
+        if (!$urlPageValid) {
+            /** @var Response $response */
+            $response = GeneralUtility::makeInstance(Response::class);
+            $fetchedData = '{"error": "Image or page not valid"}';
+            if ($fetchedData) {
+                $response->getBody()->write($fetchedData);
+            }
+            return $response;
+        } else {
+            return false;
+        }
     }
 }
