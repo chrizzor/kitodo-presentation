@@ -221,6 +221,17 @@ final class MetsDocument extends Document
         }
     }
 
+    public function getDocumentRestrictionGroup() {
+        $dmdid = (string)$this->mets->xpath("./mets:structMap[@TYPE='LOGICAL']/mets:div/@DMDID")[0];
+        $restrictionGroup = $this->mets->xpath('/mets:mets/mets:dmdSec[@ID="' . $dmdid . '"]/mets:mdWrap/mets:xmlData/mods:mods/mods:accessGroup');
+        if (!empty($restrictionGroup)) {
+            return (string)$restrictionGroup[0];
+        } else {
+            Helper::devLog('There is no group restriction node or no restriction specified', DEVLOG_SEVERITY_WARNING);
+            return '';
+        }
+    }
+
     public function getFileRestriction($id)
     {
         $restriction = $this->mets->xpath('./mets:dmdSec[@ID="' . $id . '"]/mets:mdWrap/mets:xmlData/mods:mods/mods:accessRestriction');
