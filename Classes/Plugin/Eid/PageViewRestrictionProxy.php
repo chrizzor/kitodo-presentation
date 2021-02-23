@@ -102,11 +102,11 @@ class PageViewRestrictionProxy
             } else if ($restriction !== "restricted" && $restrictionStructElement !== "restricted") {
                 $fetchedData = GeneralUtility::getUrl($url, $header);
             } else {
-                $fetchedData = GeneralUtility::getUrl('http://kitodoMOB:frontendMOB@167.86.98.211/fileadmin/placeholder.png', $header);
+                $fetchedData = GeneralUtility::getUrl('http://167.86.98.211/fileadmin/placeholder.png', $header);
             }
         } else {
             //missing doc id return placeholder
-            $fetchedData = GeneralUtility::getUrl('http://kitodoMOB:frontendMOB@167.86.98.211/fileadmin/placeholder.png', $header);
+            $fetchedData = GeneralUtility::getUrl('http://167.86.98.211/fileadmin/placeholder.png', $header);
         }
 
         // create response object
