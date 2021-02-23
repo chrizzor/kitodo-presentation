@@ -383,7 +383,7 @@ class ListView extends \Kitodo\Dlf\Common\AbstractPlugin
             if (!empty($subpart['thumbnail'])) {
                 $addParams = '';
                 if ($this->conf['useRestrictionProxy']) {
-                    $addParams = '&page=0&id=' . $this->doc->uid . '&fileGrp=' . $this->conf['fileGrpThumbs'];
+                    $addParams = '&page=' . intval($subpart['page']) . '&id=' . intval($subpart['uid']) . '&fileGrp=' . $this->conf['fileGrpThumbs'];
                 }
                 $markerArray['###SUBTHUMBNAIL###'] = '<img alt="' . $imgAlt . '" src="' . $subpart['thumbnail'] . $addParams . '" />';
             }
