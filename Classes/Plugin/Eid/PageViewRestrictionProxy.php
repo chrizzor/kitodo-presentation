@@ -53,6 +53,8 @@ class PageViewRestrictionProxy
         $docId = (int) $request->getQueryParams()['id'];
         $fileGrp = (string) $request->getQueryParams()['fileGrp'];
 
+        $ftxt_token = (string) $request->getQueryParams()['ftxt_token'];
+
         if ($docId) {
             $this->doc = Document::getInstance($docId);
             if (!$this->doc->ready) {
@@ -61,7 +63,7 @@ class PageViewRestrictionProxy
                 Helper::devLog('Failed to load document with UID ' . $this->piVars['id'], DEVLOG_SEVERITY_ERROR);
             }
 
-            if ($page == 0) {
+            if ($page == 0 || $ftxt_token == 'internal_request' && $fileGrp == 'FULLTEXT') {
                 if ($this->doc->thumbnailLoaded) {
                     $restriction = '';
                     $restrictionGroup = '';
@@ -93,9 +95,10 @@ class PageViewRestrictionProxy
             $typoScriptFrontendController->initFEuser();
             $typoScriptFrontendController->initUserGroups();
 
-            if (($restriction === "restricted" || $restrictionStructElement === "restricted") && $typoScriptFrontendController->fe_user->user['username'] != '' &&
+            if ((($restriction === "restricted" || $restrictionStructElement === "restricted") && $typoScriptFrontendController->fe_user->user['username'] != '' &&
                     ($typoScriptFrontendController->fe_user->groupData['title'][1] == 'AdminGroup' ||
-                        array_slice($typoScriptFrontendController->fe_user->groupData['title'], 0, 1)[0] == $restrictionGroup)
+                        array_slice($typoScriptFrontendController->fe_user->groupData['title'], 0, 1)[0] == $restrictionGroup))
+                || $ftxt_token == 'internal_request' && $fileGrp == 'FULLTEXT'
             ) {
                 // fetch the requested data or header
                 $fetchedData = GeneralUtility::getUrl($url, $header);

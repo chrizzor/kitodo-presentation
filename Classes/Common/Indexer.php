@@ -436,6 +436,52 @@ class Indexer
         ) {
             // Read extension configuration.
             $extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][self::$extKey]);
+            if (!empty($physicalUnit['files'][$extConf['fileGrpFulltext']])) {
+                $file = $doc->getFileLocation($physicalUnit['files'][$extConf['fileGrpFulltext']]) . '&ftxt_token=internal_request&fileGrp=FULLTEXT&id=' . $doc->uid;
+                // Load XML file.
+                if (GeneralUtility::isValidUrl($file)) {
+                    // Set user-agent to identify self when fetching XML data.
+                    if (!empty($extConf['useragent'])) {
+                        @ini_set('user_agent', $extConf['useragent']);
+                    }
+                    $fileResource = GeneralUtility::getUrl($file);
+                    if ($fileResource !== false) {
+                        // Turn off libxml's error logging.
+                        $libxmlErrors = libxml_use_internal_errors(true);
+                        // disable entity loading
+                        $previousValueOfEntityLoader = libxml_disable_entity_loader(true);
+                        // Load XML from file.
+                        $xml = simplexml_load_string($fileResource);
+                        // reset entity loader setting
+                        libxml_disable_entity_loader($previousValueOfEntityLoader);
+                        // Reset libxml's error logging.
+                        libxml_use_internal_errors($libxmlErrors);
+                        if ($xml === false) {
+                            return 1;
+                        }
+                    } else {
+                        return 1;
+                    }
+                } else {
+                    return 1;
+                }
+            }
+            if (isset($annotationContainerIds) && !empty($annotationContainerIds)) {
+                foreach ($annotationContainerIds as $annotationContainerId) {
+                    if (!empty($extConf['useragent'])) {
+                        @ini_set('user_agent', $extConf['useragent']);
+                    }
+                    $fileResource = GeneralUtility::getUrl($annotationContainerId);
+                    if ($fileResource !== false) {
+                        $annotationContainer = IiifHelper::loadIiifResource($fileResource);
+                        if (!($annotationContainer instanceof AnnotationContainerInterface)) {
+                            return 1;
+                        }
+                    } else {
+                        return 1;
+                    }
+                }
+            }
             // Create new Solr document.
             $updateQuery = self::$solr->service->createUpdate();
             $solrDoc = $updateQuery->createDocument();
