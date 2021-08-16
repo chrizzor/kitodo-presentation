@@ -55,6 +55,8 @@ class PageViewRestrictionProxy
 
         $ftxt_token = (string) $request->getQueryParams()['ftxt_token'];
 
+        $noCache = false;
+
         if ($docId) {
             $this->doc = Document::getInstance($docId);
             if (!$this->doc->ready) {
@@ -105,9 +107,11 @@ class PageViewRestrictionProxy
             } else if ($restriction !== "restricted" && $restrictionStructElement !== "restricted") {
                 $fetchedData = GeneralUtility::getUrl($url, $header);
             } else {
+                $noCache = true;
                 $fetchedData = GeneralUtility::getUrl('http://167.86.98.211/fileadmin/placeholder.png', $header);
             }
         } else {
+            $noCache = true;
             //missing doc id return placeholder
             $fetchedData = GeneralUtility::getUrl('http://167.86.98.211/fileadmin/placeholder.png', $header);
         }
@@ -117,6 +121,11 @@ class PageViewRestrictionProxy
         $response = GeneralUtility::makeInstance(Response::class);
         if ($fetchedData) {
             $response->getBody()->write($fetchedData);
+
+            if ($noCache) {
+                $response = $response->withHeader('Cache-Control', 'no-store');
+            }
+
             $response = $response->withHeader('Access-Control-Allow-Methods', 'GET');
             $response = $response->withHeader('Access-Control-Allow-Origin', $request->getHeaderLine('Origin') ?: '*');
             $response = $response->withHeader('Access-Control-Max-Age', '86400');
