@@ -177,6 +177,15 @@ class SearchController extends AbstractController
         $linkConf['forceAbsoluteUrl.']['scheme'] = !empty($this->settings['forceAbsoluteUrl']) && !empty($this->settings['forceAbsoluteUrlHttps']) ? 'https' : 'http';
         $linkConf['additionalParams'] = GeneralUtility::implodeArrayForUrl($this->prefixId, $additionalParams, '', true, false);
 
+        if ($GLOBALS['TSFE']->id !== $this->settings['targetPid']) {
+            $uri = $this->uriBuilder->reset()
+                ->setTargetPageUid($this->settings['targetPid'])
+                ->setArguments(['tx_dlf' => ['query' => $params['query'], 'fq' => $params['filterquery']], 'tx_dlf_search' => ['action' => 'main', 'controller' => 'Search']])
+                ->setAddQueryString(true)
+                ->build();
+            $this->redirectToUri($uri);
+        }
+
         $this->redirect('main', 'Search', NULL, NULL);
     }
 
