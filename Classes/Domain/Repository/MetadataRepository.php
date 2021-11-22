@@ -18,7 +18,8 @@ use Kitodo\Dlf\Common\Helper;
 
 class MetadataRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
-    public function getMetadataForListview($pages) {
+    public function getMetadataForListview($pages)
+    {
         $query = $this->createQuery();
 
         $query->matching($query->logicalOr([
@@ -34,7 +35,8 @@ class MetadataRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         return $query->execute();
     }
 
-    public function getMetadata($pages, $sysLangUid) {
+    public function getMetadata($pages, $sysLangUid)
+    {
         $query = $this->createQuery();
 
         $querySettings = $query->getQuerySettings();
