@@ -14,23 +14,26 @@ namespace Kitodo\Dlf\Domain\Repository;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use Kitodo\Dlf\Common\Helper;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 class MetadataRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
-    public function getMetadataForListview($pages)
+    /**
+     * Finds all collection for the given settings
+     *
+     * @param array $settings
+     *
+     * @return array|\TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+     */
+    public function findBySettings($settings = [])
     {
         $query = $this->createQuery();
 
-        $query->matching($query->logicalOr([
-            $query->equals('is_listed', 1),
-            $query->equals('is_sortable', 1)
-        ]));
-        $query->matching($query->equals('pid', $pages));
+        $constraints = [];
 
-        $query->setOrderings([
-            'sorting' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING
-        ]);
+        if ($settings['is_listed']) {
+            $constraints[] = $query->equals('is_listed', 1);
+        }
 
         return $query->execute();
     }
@@ -39,11 +42,20 @@ class MetadataRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
     {
         $query = $this->createQuery();
 
-        $querySettings = $query->getQuerySettings();
-        $querySettings->setLanguageUid($sysLangUid);
-        $querySettings->setLanguageOverlayMode('strict');
+        if ($settings['is_sortable']) {
+            $constraints[] = $query->equals('is_sortable', 1);
+        }
 
-        $query->matching($query->equals('pid', $pages));
+        if (count($constraints)) {
+            $query->matching(
+                $query->logicalAnd($constraints)
+            );
+        }
+
+        // order by oai_name
+        $query->setOrderings(
+            array('sorting' => QueryInterface::ORDER_ASCENDING)
+        );
 
         return $query->execute();
     }
