@@ -520,7 +520,9 @@ class OaiPmh extends \Kitodo\Dlf\Common\AbstractPlugin
             $recordNode->appendChild($headerNode);
         } else {
             foreach (explode(' ', $resArray['collections']) as $spec) {
-                $headerNode->appendChild($this->oai->createElementNS('http://www.openarchives.org/OAI/2.0/', 'setSpec', htmlspecialchars($spec, ENT_NOQUOTES, 'UTF-8')));
+                if (!empty($spec)) {
+                    $headerNode->appendChild($this->oai->createElementNS('http://www.openarchives.org/OAI/2.0/', 'setSpec', htmlspecialchars($spec, ENT_NOQUOTES, 'UTF-8')));
+                }
             }
             $recordNode->appendChild($headerNode);
             $metadataNode = $this->oai->createElementNS('http://www.openarchives.org/OAI/2.0/', 'metadata');

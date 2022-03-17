@@ -242,7 +242,7 @@ class DocumentList implements \ArrayAccess, \Countable, \Iterator, \TYPO3\CMS\Co
                     if ($this->metadata['fulltextSearch']) {
                         $params['component'] = [
                             'highlighting' => [
-                                'query' => Solr::escapeQuery($this->metadata['searchString']),
+//                                'query' => Solr::escapeQuery($this->metadata['searchString']),
                                 'field' => 'fulltext',
                                 'usefastvectorhighlighter' => true
                             ]

@@ -77,8 +77,12 @@ class PageViewRestrictionProxy
                 $restrictionGroup = $this->doc->getDocumentRestrictionGroup();
 
                 // check if struct element is "restricted"
-                $logicalStructId = $this->doc->smLinks['p2l'][$this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['id']][1];
-                $restrictionStructElement = $this->doc->getFileRestriction($this->doc->getLogicalStructure($logicalStructId)['dmdId']);
+                $sections = $this->doc->smLinks['p2l'][$this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['id']];
+                foreach($sections as $key => $logicalStructId) {
+                    if ($this->doc->getFileRestriction($this->doc->getLogicalStructure($logicalStructId)['dmdId']) == "restricted") {
+                        $restrictionStructElement = "restricted";
+                    }
+                }
 
                 $urlValidationResponse = $this->checkUrl($fileLocationFromMets, $url);
                 if ($urlValidationResponse) {

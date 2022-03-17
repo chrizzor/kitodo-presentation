@@ -58,7 +58,6 @@ class PageGrid extends \Kitodo\Dlf\Common\AbstractPlugin
         if ($this->conf['useRestrictionProxy']) {
             $addParams = '&page=' . $number . '&id=' . $this->doc->uid . '&fileGrp=' . $this->conf['fileGrpThumbs'];
         }
-
         // Get thumbnail or placeholder.
         $fileGrpsThumb = GeneralUtility::trimExplode(',', $this->conf['fileGrpThumbs']);
         if (array_intersect($fileGrpsThumb, array_keys($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$number]]['files'])) !== [] ) {

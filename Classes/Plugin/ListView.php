@@ -199,7 +199,7 @@ class ListView extends \Kitodo\Dlf\Common\AbstractPlugin
             if ($this->conf['useRestrictionProxy']) {
                 $addParams = '&page=0&id=' . $this->list[$number]['uid'] . '&fileGrp=' . $this->conf['fileGrpThumbs'];
             }
-            $markerArray['###THUMBNAIL###'] = '<img alt="' . $imgAlt . '" src="' . $this->list[$number]['thumbnail'] . $addParams . '" />';
+            $markerArray['###THUMBNAIL###'] = '<img loading="lazy" alt="' . $imgAlt . '" src="' . $this->list[$number]['thumbnail'] . $addParams . '" />';
         }
         // Add preview.
         if (!empty($this->list[$number]['preview'])) {
@@ -381,11 +381,11 @@ class ListView extends \Kitodo\Dlf\Common\AbstractPlugin
             }
             // Add thumbnail.
             if (!empty($subpart['thumbnail'])) {
-                $addParams = '';
-                if ($this->conf['useRestrictionProxy']) {
+            	$addParams = '';
+            	if ($this->conf['useRestrictionProxy']) {
                     $addParams = '&page=' . intval($subpart['page']) . '&id=' . intval($subpart['uid']) . '&fileGrp=' . $this->conf['fileGrpThumbs'];
-                }
-                $markerArray['###SUBTHUMBNAIL###'] = '<img alt="' . $imgAlt . '" src="' . $subpart['thumbnail'] . $addParams . '" />';
+            	}
+                $markerArray['###SUBTHUMBNAIL###'] = '<img loading="lazy" alt="' . $imgAlt . '" src="' . $subpart['thumbnail'] . $addParams . '" />';
             }
             // Add preview.
             if (!empty($subpart['preview'])) {
