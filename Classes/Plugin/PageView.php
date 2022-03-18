@@ -242,7 +242,7 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
                     ];
                     $image['url'] = $this->cObj->typoLink_URL($linkConf);
                 } else if ($this->conf['useRestrictionProxy']) {
-                    $image['url'] = $image['url'] . '&page=' . $page . '&id=' . $this->doc->uid . '&fileGrp=' . $fileGrp;
+                    $image['url'] = $image['url'] . '&page=' . $page . '&id=' . $this->doc->uid . '&fileGrp=' . $fileGrpImages;
                 }
                 $image['mimetype'] = $this->doc->getFileMimeType($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$fileGrpImages]);
                 break;
