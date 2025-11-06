@@ -18,6 +18,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 /**
  * eID image proxy for plugin 'Page View' of the 'dlf' extension
  *
@@ -49,21 +50,58 @@ class PageViewRestrictionProxy
             throw new \InvalidArgumentException('No valid url passed!', 1580482805);
         }
 
+//        if ($request->getQueryParams()['page'] === NULL ||
+//            $request->getQueryParams()['id'] === NULL ||
+//            $request->getQueryParams()['fileGrp'] === NULL) {
+//            throw new \InvalidArgumentException('No valid parameter passed!', 1580482805);
+//        }
+
         $page = (int) $request->getQueryParams()['page'];
         $docId = (int) $request->getQueryParams()['id'];
-        $fileGrp = (string) $request->getQueryParams()['fileGrp'];
+        $fileGrp = (string) $request->getQueryParams()['fileGrp']; //remove ?
+        $fileGrp = strtoupper($request->getQueryParams()['use']);
+
+        if ($fileGrp === 'THUMBNAILS') {$fileGrp = 'THUMBS';}
 
         $ftxt_token = (string) $request->getQueryParams()['ftxt_token'];
 
         $noCache = false;
 
-        if ($docId) {
-            $this->doc = Document::getInstance($docId);
+        $recordId = explode("_", str_replace("http://127.0.0.1:8182/iiif/2/", '', $url))[0];
+
+        if ($docId || $recordId) {
+            if ($docId) {
+                $this->doc = Document::getInstance($docId);
+            } else {
+                $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+                    ->getQueryBuilderForTable('tx_dlf_documents');
+
+                // Get UID of document with given record identifier.
+                $result = $queryBuilder
+                    ->select('tx_dlf_documents.uid AS uid')
+                    ->from('tx_dlf_documents')
+                    ->where(
+                        $queryBuilder->expr()->eq('tx_dlf_documents.record_id', $queryBuilder->expr()->literal($recordId)),
+                        Helper::whereExpression('tx_dlf_documents')
+                    )
+                    ->setMaxResults(1)
+                    ->execute();
+
+                if ($resArray = $result->fetch()) {
+                    if ($resArray['uid']) {
+                        $this->doc = Document::getInstance($resArray['uid']);
+                    }
+                }
+            }
+
             if (!$this->doc->ready) {
                 // Destroy the incomplete object.
                 $this->doc = null;
                 Helper::devLog('Failed to load document with UID ' . $this->piVars['id'], DEVLOG_SEVERITY_ERROR);
             }
+
+            $pageFileIdArray = $this->doc->getDmdIdFromFileLocationstring($url);
+            $page = (int)$pageFileIdArray['page'];
 
             if ($page == 0 || $ftxt_token == 'internal_request' && $fileGrp == 'FULLTEXT') {
                 if ($this->doc->thumbnailLoaded) {
@@ -101,23 +139,31 @@ class PageViewRestrictionProxy
             $typoScriptFrontendController->initFEuser();
             $typoScriptFrontendController->initUserGroups();
 
+
+            $fetchedData = "";
             if ((($restriction === "restricted" || $restrictionStructElement === "restricted") && $typoScriptFrontendController->fe_user->user['username'] != '' &&
                     ($typoScriptFrontendController->fe_user->groupData['title'][1] == 'AdminGroup' ||
-                        array_slice($typoScriptFrontendController->fe_user->groupData['title'], 0, 1)[0] == $restrictionGroup))
+//                       array_slice($typoScriptFrontendController->fe_user->groupData['title'], 0, 1)[0] == $restrictionGroup
+                        in_array($restrictionGroup, $typoScriptFrontendController->fe_user->groupData['title'])
+                    ))
                 || $ftxt_token == 'internal_request' && $fileGrp == 'FULLTEXT'
             ) {
                 // fetch the requested data or header
-                $fetchedData = GeneralUtility::getUrl($url, $header);
+                if ($this->whitelistedUrl($url)) {
+                    $fetchedData = GeneralUtility::getUrl($url, $header);
+                }
             } else if ($restriction !== "restricted" && $restrictionStructElement !== "restricted") {
-                $fetchedData = GeneralUtility::getUrl($url, $header);
+                if ($this->whitelistedUrl($url)) {
+                    $fetchedData = GeneralUtility::getUrl($url, $header);
+                }
             } else {
                 $noCache = true;
-                $fetchedData = GeneralUtility::getUrl('http://167.86.98.211/fileadmin/placeholder.png', $header);
+                $fetchedData = GeneralUtility::getUrl('https://digital.martin-opitz-bibliothek.de/fileadmin/placeholder.png', $header);
             }
         } else {
             $noCache = true;
             //missing doc id return placeholder
-            $fetchedData = GeneralUtility::getUrl('http://167.86.98.211/fileadmin/placeholder.png', $header);
+            $fetchedData = GeneralUtility::getUrl('https://digital.martin-opitz-bibliothek.de/fileadmin/placeholder.png', $header);
         }
 
         // create response object
@@ -139,6 +185,12 @@ class PageViewRestrictionProxy
         return $response;
 
 
+    }
+
+    protected function whitelistedUrl($url) {
+        return (str_starts_with($url, "http://127.0.0.1:8085/") || str_starts_with($url, "http://127.0.0.1:8182/"));
+        // return (str_starts_with($url, "http://127.0.0.1:8085/") || str_starts_with($url, "http://167.86.98.211:8085/") ||
+        //         str_starts_with($url, "http://127.0.0.1:8182/") || str_starts_with($url, "http://167.86.98.211:8182/"));
     }
 
     protected function checkUrl($metsUrl, $url) {

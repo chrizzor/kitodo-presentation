@@ -232,6 +232,22 @@ final class MetsDocument extends Document
         }
     }
 
+    public function getDmdIdFromFileLocationstring($fileLocation)
+    {
+        $fileLocation = urlencode($fileLocation);
+        $allFileIds = $this->mets->xpath("./mets:fileSec/mets:fileGrp/mets:file");
+        $fileIdUrlArray = [];
+        foreach($allFileIds as $fileElement) {
+            $value = (string)$fileElement->xpath("./mets:FLocat/@xlink:href")[0][0];
+            $value = substr($value, (strpos($value, 'url=') + 4));
+            $fileIdUrlArray[(string)$fileElement->attributes()->ID] = $value;
+        }
+
+        $fileId = array_search($fileLocation, $fileIdUrlArray);
+        $page = (string)$this->mets->xpath("./mets:structMap[@TYPE='PHYSICAL']/mets:div/mets:div/mets:fptr[@FILEID='$fileId']")[0]->xpath("parent::*")[0]->attributes()->ORDER;
+        return ['page' => $page, 'fileId' => $fileId];
+    }
+
     public function getFileRestriction($id)
     {
         $restriction = $this->mets->xpath('./mets:dmdSec[@ID="' . $id . '"]/mets:mdWrap/mets:xmlData/mods:mods/mods:accessRestriction');
