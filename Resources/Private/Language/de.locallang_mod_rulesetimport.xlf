@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2025-01-01T00:00:00Z">
+        <body>
+            <trans-unit id="mlang_labels_tabdescr">
+                <source><![CDATA[Manage metadata configuration from a Kitodo.Production ruleset XML file.]]></source>
+                <target><![CDATA[Verwaltung der Metadatenkonfiguration aus einer Kitodo.Production-Regelsatzdatei (XML).]]></target>
+            </trans-unit>
+            <trans-unit id="mlang_labels_tablabel">
+                <source><![CDATA[Ruleset Import]]></source>
+                <target><![CDATA[Regelsatz-Import]]></target>
+            </trans-unit>
+            <trans-unit id="mlang_tabs_tab">
+                <source><![CDATA[Ruleset Import]]></source>
+                <target><![CDATA[Regelsatz-Import]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.module">
+                <source><![CDATA[Ruleset Import]]></source>
+                <target><![CDATA[Regelsatz-Import]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.intro">
+                <source><![CDATA[The following metadata keys are available in the configured ruleset. Check the fields you want to activate – unchecked fields will be hidden. New fields will be created; existing hidden fields will be reactivated.]]></source>
+                <target><![CDATA[Die folgenden Metadatenschlüssel sind im konfigurierten Regelsatz verfügbar. Aktivierte Felder werden angelegt bzw. eingeblendet, deaktivierte Felder werden ausgeblendet.]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.wrongPageType">
+                <source><![CDATA[Wrong page type]]></source>
+                <target><![CDATA[Falscher Seitentyp]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.wrongPageTypeMsg">
+                <source><![CDATA[Please select a SysFolder (page type 254) in the page tree to use this module.]]></source>
+                <target><![CDATA[Bitte wählen Sie im Seitenbaum einen Systemordner (Seitentyp 254) aus, um dieses Modul zu verwenden.]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.noRulesetPath">
+                <source><![CDATA[No ruleset path configured]]></source>
+                <target><![CDATA[Kein Regelsatz-Pfad konfiguriert]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.noRulesetPathMsg">
+                <source><![CDATA[Please configure the path to the Kitodo.Production ruleset XML file in the extension settings (Admin Tools → Settings → Extension Configuration → dlf).]]></source>
+                <target><![CDATA[Bitte konfigurieren Sie den Pfad zur Kitodo.Production-Regelsatzdatei in den Extension-Einstellungen (Admin-Werkzeuge → Einstellungen → Extension-Konfiguration → dlf).]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.rulesetFileNotFound">
+                <source><![CDATA[Ruleset file not found]]></source>
+                <target><![CDATA[Regelsatzdatei nicht gefunden]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.rulesetFileNotFoundMsg">
+                <source><![CDATA[The ruleset file could not be found at the configured path: %s]]></source>
+                <target><![CDATA[Die Regelsatzdatei wurde unter dem konfigurierten Pfad nicht gefunden: %s]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.parseError">
+                <source><![CDATA[Ruleset parse error]]></source>
+                <target><![CDATA[Fehler beim Einlesen des Regelsatzes]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.parseErrorMsg">
+                <source><![CDATA[The ruleset file could not be parsed as valid XML:]]></source>
+                <target><![CDATA[Die Regelsatzdatei konnte nicht als gültiges XML eingelesen werden:]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.noKeys">
+                <source><![CDATA[No metadata keys found]]></source>
+                <target><![CDATA[Keine Metadatenschlüssel gefunden]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.noKeysMsg">
+                <source><![CDATA[The ruleset file contains no metadata key declarations.]]></source>
+                <target><![CDATA[Die Regelsatzdatei enthält keine Metadatenschlüssel.]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.noModsFormat">
+                <source><![CDATA[MODS format not configured]]></source>
+                <target><![CDATA[MODS-Format nicht konfiguriert]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.noModsFormatMsg">
+                <source><![CDATA[No MODS format record was found on this page. Please add the default format records first via the "New Tenant" module.]]></source>
+                <target><![CDATA[Auf dieser Seite wurde kein MODS-Formatdatensatz gefunden. Bitte legen Sie zuerst die Standard-Formatdatensätze über das Modul "New Tenant" an.]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.saveSuccess">
+                <source><![CDATA[Saved]]></source>
+                <target><![CDATA[Gespeichert]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.saveSuccessMsg">
+                <source><![CDATA[The metadata configuration has been updated successfully.]]></source>
+                <target><![CDATA[Die Metadatenkonfiguration wurde erfolgreich aktualisiert.]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.keyId">
+                <source><![CDATA[Key ID]]></source>
+                <target><![CDATA[Schlüssel-ID]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.labelDe">
+                <source><![CDATA[Label (DE)]]></source>
+                <target><![CDATA[Bezeichnung (DE)]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.labelEn">
+                <source><![CDATA[Label (EN)]]></source>
+                <target><![CDATA[Bezeichnung (EN)]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.status">
+                <source><![CDATA[Status]]></source>
+                <target><![CDATA[Status]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.status.active">
+                <source><![CDATA[Active]]></source>
+                <target><![CDATA[Aktiv]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.status.hidden">
+                <source><![CDATA[Hidden]]></source>
+                <target><![CDATA[Ausgeblendet]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.status.new">
+                <source><![CDATA[New]]></source>
+                <target><![CDATA[Neu]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.selectAll">
+                <source><![CDATA[Select all]]></source>
+                <target><![CDATA[Alle auswählen]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.deselectAll">
+                <source><![CDATA[Deselect all]]></source>
+                <target><![CDATA[Alle abwählen]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.labelLangLabel">
+                <source><![CDATA[Label language]]></source>
+                <target><![CDATA[Bezeichnungssprache]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.labelLangHelp">
+                <source><![CDATA[Language used for the metadata record label when creating new records.]]></source>
+                <target><![CDATA[Sprache für die Bezeichnung neu erstellter Metadatendatensätze.]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.rulesetPathInfo">
+                <source><![CDATA[Ruleset:]]></source>
+                <target><![CDATA[Regelsatz:]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.xsltPathInfo">
+                <source><![CDATA[XSLT:]]></source>
+                <target><![CDATA[XSLT:]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.xpath">
+                <source><![CDATA[XPath]]></source>
+                <target><![CDATA[XPath]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.xpathDerived">
+                <source><![CDATA[derived from XSLT]]></source>
+                <target><![CDATA[aus XSLT abgeleitet]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.xpathFallback">
+                <source><![CDATA[pattern fallback]]></source>
+                <target><![CDATA[Muster-Fallback]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.saveBtn">
+                <source><![CDATA[Save selection]]></source>
+                <target><![CDATA[Auswahl speichern]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.use.docType">
+                <source><![CDATA[Document type]]></source>
+                <target><![CDATA[Dokumenttyp]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.use.recordIdentifier">
+                <source><![CDATA[Record identifier]]></source>
+                <target><![CDATA[Datensatzidentifikator]]></target>
+            </trans-unit>
+            <trans-unit id="rulesetImport.use.structureTreeTitle">
+                <source><![CDATA[Structure tree title]]></source>
+                <target><![CDATA[Strukturbaum-Titel]]></target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

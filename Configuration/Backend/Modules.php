@@ -30,4 +30,18 @@ return [
             ],
         ],
     ],
+    'rulesetImportModule' => [
+        'extensionName'         => 'Dlf',
+        'parent'                => 'tools',
+        'position'              => 'bottom',
+        'access'                => 'admin',
+        'labels'                => 'LLL:EXT:dlf/Resources/Private/Language/locallang_mod_rulesetimport.xlf',
+        'icon'                  => 'EXT:dlf/Resources/Public/Icons/Extension.svg',
+        'navigationComponentId' => '@typo3/backend/page-tree/page-tree-element',
+        'controllerActions'     => [
+            \Kitodo\Dlf\Controller\Backend\RulesetImportController::class => [
+                'index', 'save', 'error'
+            ],
+        ],
+    ],
 ];

@@ -674,6 +674,15 @@
             <trans-unit id="config.embedded3dviewer.defaultViewer">
                 <source>Default viewer : Overwrite the built-in default viewer with a supported viewer (from the "dlf_3d_viewers" directory) to be used as a fallback. (The built-in default viewer is the "model-viewer", which only supports "glTF/GLB 3D models" as the model file format.)</source>
             </trans-unit>
+            <trans-unit id="config.rulesetImport.rulesetPath">
+                <source>Ruleset path : Absolute path or EXT: path to the Kitodo.Production ruleset XML file used by the Ruleset Import backend module.</source>
+            </trans-unit>
+            <trans-unit id="config.rulesetImport.xpathPattern">
+                <source>XPath pattern : Use %s as placeholder for the key ID. The default reads from the Kitodo metadata extension element in MODS (standard Kitodo.Production export format).</source>
+            </trans-unit>
+            <trans-unit id="config.rulesetImport.xsltPath">
+                <source>XSLT path : Absolute path or EXT: path to the Kitodo.Production export XSLT file. When set, the XSLT is parsed to automatically derive the MODS XPath for each metadata key.</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

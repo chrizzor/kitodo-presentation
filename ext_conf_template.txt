@@ -118,3 +118,9 @@ solr.fields.geom = geom
 embedded3dviewer.viewerModelFormatMapping =
 # cat=Embedded 3D Viewer; type=string; label=LLL:EXT:dlf/Resources/Private/Language/locallang_labels.xlf:config.embedded3dviewer.defaultViewer
 embedded3dviewer.defaultViewer =
+# cat=Ruleset Import; type=string; label=LLL:EXT:dlf/Resources/Private/Language/locallang_labels.xlf:config.rulesetImport.rulesetPath
+rulesetImport.rulesetPath =
+# cat=Ruleset Import; type=string; label=LLL:EXT:dlf/Resources/Private/Language/locallang_labels.xlf:config.rulesetImport.xpathPattern
+rulesetImport.xpathPattern = ./mods:extension/kitodo:kitodo/kitodo:metadata[@name='%s']
+# cat=Ruleset Import; type=string; label=LLL:EXT:dlf/Resources/Private/Language/locallang_labels.xlf:config.rulesetImport.xsltPath
+rulesetImport.xsltPath =
